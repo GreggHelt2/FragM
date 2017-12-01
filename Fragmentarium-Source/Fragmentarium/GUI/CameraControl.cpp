@@ -416,7 +416,7 @@ namespace Fragmentarium {
             double rotationValue = rotation->getValue() * deg2rad;
 
             double factor = pow(1.05f,(double)stepSize);
-            double zFactor = 0.1/zoomValue;
+            double zFactor = 0.1 * stepSize / zoomValue;
 
             bool keysDown = false;
 
