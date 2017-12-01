@@ -460,15 +460,14 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
-            // shouldn't W and S be reversed??
-            // W: move camera down (+y)
-            if (keyDown(Qt::Key_W)) {
+            // S: move camera down (-y)
+            if (keyDown(Qt::Key_S)) {
                 center->setValue(centerValue + QVector3D(-zFactor * -sin(rotationValue),-zFactor * cos(rotationValue),0.0));
                 keysDown = true;
             }
 
-            // S: move camera up (-y)
-            if (keyDown(Qt::Key_S)) {
+            // W: move camera up (+y)
+            if (keyDown(Qt::Key_W)) {
                 center->setValue(centerValue+QVector3D(zFactor * -sin(rotationValue), zFactor * cos(rotationValue),0.0));
                 keysDown = true;
             }
