@@ -80,11 +80,16 @@ namespace Fragmentarium {
 
         bool Camera3D::parseKeys() {
             if (!up || !target || !eye || !fov) return false;
-
             //INFO("Parse keys...");
+            // define axes of local camera coordinate system
+            // dir is vector of axes along direction of camera
+            // rotation around dir is roll
             QVector3D direction = (target->getValue()-eye->getValue());
             QVector3D dir = direction.normalized();
+            // rotation around right axes/vector is yaw
             QVector3D right = QVector3D::crossProduct(direction.normalized(), up->getValue()).normalized();
+            // rotation around upV axes/vector is pitch
+            //   [should upV be normalized also?]
             QVector3D upV = up->getValue();
 
             double factor = stepSize*10.0;
@@ -113,7 +118,9 @@ namespace Fragmentarium {
               INFO(QCoreApplication::translate("Camera3D","Step size: %1").arg(stepSize));
               keyStatus[Qt::Key_5] = false; // only apply once
             }
-            
+
+            // A: move camera left
+            //   (decrement along right vector)
             if (keyDown(Qt::Key_A)) {
                 QVector3D offset = -right*stepSize;
                 eye->setValue(eye->getValue()+offset);
@@ -121,6 +128,8 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // D: move camera right
+            //   (increment along right vector)
             if (keyDown(Qt::Key_D)) {
                 QVector3D offset = right*stepSize;
                 eye->setValue(eye->getValue()+offset);
@@ -128,6 +137,8 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // W: move camera forward
+            //   (increment along dir vector)
             if (keyDown(Qt::Key_W)) {
                 QVector3D offset = dir*stepSize;
                 QVector3D db2 = eye->getValue()+offset;
@@ -136,6 +147,8 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // S: move camera backward
+            //   (decrement along dir vector)
             if (keyDown(Qt::Key_S)) {
                 QVector3D offset = -dir*stepSize;
                 eye->setValue(eye->getValue()+offset);
@@ -143,6 +156,9 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // [R and F should be reversed? (to be consistent with camera-centric controls)]
+            // R: move camera down
+            //   (increment along upV vector)
             if (keyDown(Qt::Key_R)) {
                 QVector3D offset = -upV*stepSize;
                 eye->setValue(eye->getValue()+offset);
@@ -150,6 +166,8 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // F: move camera up
+            //   (decrement along upV vector)
             if (keyDown(Qt::Key_F)) {
                 QVector3D offset = upV*stepSize;
                 eye->setValue(eye->getValue()+offset);
@@ -157,6 +175,9 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // Y: yaw positive
+            // rotate camera left relative to local camera coordinate system
+            //  (rotate camera counterclockwise around upV axes)
             if (keyDown(Qt::Key_Y)) {
                 QMatrix4x4 m; m.rotate(factor, upV);
                 target->setValue(m*direction+eye->getValue());
@@ -164,6 +185,9 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // H: yaw negative
+            // rotate camera right relative to local camera coordinate system
+            //  (rotate camera clockwise around upV axes)
             if (keyDown(Qt::Key_H)) {
                 QMatrix4x4 m; m.rotate(-factor,upV);
                 target->setValue(m*direction+eye->getValue());
@@ -171,6 +195,9 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // T: pitch positive
+            // rotate camera up relative to local camera coordinate system
+            //  (rotate camera clockwise around right axes)
             if (keyDown(Qt::Key_T)) {
                 QMatrix4x4 m; m.rotate(factor, right);
                 target->setValue(m*direction+eye->getValue());
@@ -178,6 +205,9 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // G: pitch negative
+            // rotate camera down relative to local camera coordinate system
+            //  (rotate camera counterclockwise around right axes)
             if (keyDown(Qt::Key_G)) {
                 QMatrix4x4 m; m.rotate(-factor, right);
                 target->setValue(m*direction+eye->getValue());
@@ -185,6 +215,9 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // E: roll positive
+            // rotate camera clockwise relative to local camera coordinate system
+            //    (rotate camera clockwise around dir axes)
             if (keyDown(Qt::Key_E)) {
                 QMatrix4x4 m; m.rotate(factor, dir);
                 target->setValue(m*direction+eye->getValue());
@@ -192,6 +225,9 @@ namespace Fragmentarium {
                 keysDown = true;
             }
 
+            // Q: roll negative
+            // rotate camera counterclockwise relative to local camera coordinate system
+            //    (rotate camera counterclockwise around dir axes)
             if (keyDown(Qt::Key_Q)) {
                 QMatrix4x4 m; m.rotate(-factor, dir);
                 target->setValue(m*direction+eye->getValue());
