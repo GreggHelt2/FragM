@@ -413,7 +413,11 @@ namespace Fragmentarium {
             if (!center || !zoom) return false;
             QVector3D centerValue = center->getValue();
             double zoomValue = zoom->getValue();
-            double rotationValue = rotation->getValue() * deg2rad;
+
+            double rotationValue;
+            // need to check that rotation widget exists, in case using older include frags, otherwise crashes!
+            if (rotation) { rotationValue = rotation->getValue() * deg2rad; }
+            else { rotationValue = 0.0; }
 
             double factor = pow(1.05f,(double)stepSize);
             double zFactor = 0.1/zoomValue;
@@ -494,7 +498,11 @@ namespace Fragmentarium {
             QVector3D pos = QVector3D(e->pos().x()/(0.5*double(w))-1.0,1.0-e->pos().y()/(0.5*double(h)),0.0);
             QVector3D centerValue = center->getValue();
             double zoomValue = zoom->getValue();
-            double rotationValue = rotation->getValue() * deg2rad;
+            double rotationValue;
+            // need to check that rotation widget exists, in case using older include frags, otherwise crashes!
+            if (rotation) { rotationValue = rotation->getValue() * deg2rad; }
+            else { rotation = 0; }
+
 
             if (e->type() ==  QEvent::MouseButtonPress) {
                 mouseDown = pos;
